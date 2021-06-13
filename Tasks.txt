@@ -1,0 +1,41 @@
+GameStates:
+1. START - "Welcome to the game!"
+    set scanner,
+    set isUserPredictor to true
+2. PLAY - "You are/AI is the predictor, what is your input?"
+3. AWAIT_INPUT - Scanner.nextLine()
+    set userResponse
+4. VALIDATE_INPUT
+    - if validHands && validPrediction, go to 6
+    - else, go to 3
+        - if isUserPredictor
+            - if validHands && validPrediction, go to 6
+            - if validHands && !validPrediction, "Bad input: prediction should be in the range of 0-4."
+            - else, "Bad input: correct input should be of the form CC3, where the first two letters indicate [O]pen or [C]losed state for each hand, followed by the prediction (0-4)."
+        - if !isUserPredictor
+            - if validHands && emptyPrediction, go to 6
+            - if validHands && !emptyPrediction, "Bad input: no prediction expected, you are not the predictor."
+            - else, "Bad input: correct input should be of the form CC3, where the letters indicate [O]pen or [C]losed state for each hand."
+        4. AI_RESPONDS - "AI: xx"
+            set aiResponse
+6. GET_RESULT
+    - if isPredictionGood, "You WIN!! or You LOSE!!", go to 8
+    - else, "No winner.", go to 7
+7. NEXT_ROUND - swap predictors, go to 2
+    set isUserPredictor = !isUserPredictor
+8. GAME_OVER - "Do you want to play again?" Scanner.next().charAt(0)
+    - if N/n, Ok bye! go to 9
+    - else, go to 1
+9. END
+
+===
+
+GameUtils:
+- getAiHands()
+- getAiPrediction()
+- isPredictionGood(user, ai)
+    - getTotalOpenHands(user, ai)
+    - getPrediction(user, ai)
+- isValidHands(user)
+- isValidPrediction(user)
+- isEmptyPrediction(user)
