@@ -46,4 +46,8 @@ public class GameUtil {
     static boolean isEmptyPrediction(String response) {
         return response.substring(2).isEmpty();
     }
+
+    public static boolean isValidTargetScore(int x) {
+        return x >= 1 && x <= 5;
+    }
 }

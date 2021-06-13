@@ -52,7 +52,7 @@ public class GameUtilTest {
     }
 
     @Test
-    public void shouldReturnIfUserGivesValidPredictionInputWhenUserIsPredictorAndHandsInputIsValid() {
+    public void shouldReturnIfUserGivesValidPredictionInputWhenHandsInputIsValid() {
         assertThat(GameUtil.isValidPrediction("CC3"), is(true));
         assertThat(GameUtil.isValidPrediction("CC8"), is(false));
         assertThat(GameUtil.isValidPrediction("CCe"), is(false));
@@ -60,8 +60,15 @@ public class GameUtilTest {
     }
 
     @Test
-    public void shouldReturnIfUserGivesNoPredictionInputWhenAiIsPredictorAndHandsInputIsValid() {
+    public void shouldReturnIfUserGivesNoPredictionInputWhenHandsInputIsValid() {
         assertThat(GameUtil.isEmptyPrediction("CC"), is(true));
         assertThat(GameUtil.isEmptyPrediction("CC3"), is(false));
+    }
+
+    @Test
+    public void shouldReturnIfUserGivesValidTargetScoreInput() {
+        assertThat(GameUtil.isValidTargetScore(3), is(true));
+        assertThat(GameUtil.isValidTargetScore(-1), is(false));
+        assertThat(GameUtil.isValidTargetScore(1000000), is(false));
     }
 }

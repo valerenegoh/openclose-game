@@ -10,9 +10,28 @@ public enum GameState {
         @Override
         public GameState execute() {
             scanner = new Scanner(System.in);
-            isUserPredictor = true;
+            resetConfigurations();
             sysOut.println("Welcome to the game!");
-            return PLAY;
+            sysOut.println("What is your target score?");
+            return AWAIT_TARGET_SCORE;
+        }
+    },
+    AWAIT_TARGET_SCORE {
+        @Override
+        public GameState execute() {
+            targetScore = scanner.nextInt();
+            return VALIDATE_TARGET_SCORE;
+        }
+    },
+    VALIDATE_TARGET_SCORE {
+        @Override
+        public GameState execute() {
+            if (isValidTargetScore(targetScore)) {
+                sysOut.println(String.format("Target score set. Predict correctly %d times to win the game.", targetScore));
+                return PLAY;
+            }
+            sysOut.println("Bad input: target score should be in the range of 1-5.");
+            return AWAIT_TARGET_SCORE;
         }
     },
     PLAY {
@@ -58,19 +77,29 @@ public enum GameState {
         @Override
         public GameState execute() {
             if (isPredictionGood(userResponse, aiResponse)) {
-                if (isUserPredictor) sysOut.println("You WIN!!");
-                else sysOut.println("You LOSE!!");
-                return GAME_OVER;
+                if (isUserPredictor) {
+                    userScore++;
+                    if (userScore == targetScore) {
+                        sysOut.println("You WIN!!");
+                        return GAME_OVER;
+                    } else {
+                        sysOut.println("You win this round!!");
+                        isUserPredictor = true;
+                    }
+                } else {
+                    aiScore++;
+                    if (aiScore == targetScore) {
+                        sysOut.println("You LOSE!!");
+                        return GAME_OVER;
+                    } else {
+                        sysOut.println("You lose this round!!");
+                        isUserPredictor = false;
+                    }
+                }
             } else {
                 sysOut.println("No winner.");
-                return NEXT_ROUND;
+                isUserPredictor = !isUserPredictor;
             }
-        }
-    },
-    NEXT_ROUND {
-        @Override
-        public GameState execute() {
-            isUserPredictor = !isUserPredictor;
             return PLAY;
         }
     },
@@ -96,7 +125,17 @@ public enum GameState {
     static Scanner scanner;
     static PrintStream sysOut = new PrintStream(System.out);
     static boolean isUserPredictor;
+    static int targetScore;
+    static int userScore;
+    static int aiScore;
     static String userResponse;
     static String aiResponse;
-    public abstract GameState execute();
+
+    abstract GameState execute();
+
+    void resetConfigurations() {
+        isUserPredictor = true;
+        userScore = 0;
+        aiScore = 0;
+    }
 }

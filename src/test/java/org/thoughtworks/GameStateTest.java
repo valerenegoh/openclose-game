@@ -29,7 +29,21 @@ public class GameStateTest {
         state.execute();
 
         assertThat(out.toString(), containsString("Welcome to the game!"));
+        assertThat(out.toString(), containsString("What is your target score?"));
         assertThat(GameState.isUserPredictor, is(true));
+    }
+
+    @Test
+    public void shouldPrintCorrectValidationMessageForValidateTargetScoreState() {
+        state = GameState.VALIDATE_TARGET_SCORE;
+
+        GameState.targetScore = 3;
+        state.execute();
+        assertThat(out.toString(), containsString("Target score set. Predict correctly 3 times to win the game."));
+
+        GameState.targetScore = -1;
+        state.execute();
+        assertThat(out.toString(), containsString("Bad input: target score should be in the range of 1-5."));
     }
 
     @Test
@@ -85,33 +99,38 @@ public class GameStateTest {
     @Test
     public void shouldPrintCorrectResultMessageForGetResultState() {
         state = GameState.GET_RESULT;
+        GameState.targetScore = 2;
 
         GameState.isUserPredictor = true;
         GameState.userResponse = "OO4";
         GameState.aiResponse = "CO";
         state.execute();
         assertThat(out.toString(), containsString("No winner."));
+        assertThat(GameState.isUserPredictor, is(false));
+
+        GameState.isUserPredictor = true;
 
         GameState.userResponse = "CO3";
         GameState.aiResponse = "OO";
+
+        state.execute();
+        assertThat(out.toString(), containsString("You win this round!!"));
+        assertThat(GameState.isUserPredictor, is(true));
+
         state.execute();
         assertThat(out.toString(), containsString("You WIN!!"));
 
         GameState.isUserPredictor = false;
+
         GameState.userResponse = "OC";
         GameState.aiResponse = "CO2";
+
+        state.execute();
+        assertThat(out.toString(), containsString("You lose this round!!"));
+        assertThat(GameState.isUserPredictor, is(false));
+
         state.execute();
         assertThat(out.toString(), containsString("You LOSE!!"));
-    }
-
-    @Test
-    public void shouldSwapPredictorsForNextRoundState() {
-        state = GameState.NEXT_ROUND;
-        GameState.isUserPredictor = true;
-
-        state.execute();
-
-        assertThat(GameState.isUserPredictor, is(false));
     }
 
     @Test
@@ -132,10 +151,20 @@ public class GameStateTest {
     public void shouldHaveCorrectStateTransitions() {
         state = GameState.START;
 
+        String input = "1";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        GameState.scanner = new Scanner(System.in);
+
+        state = state.execute();
+        assertThat(state, is(GameState.AWAIT_TARGET_SCORE));
+
+        state = state.execute();
+        assertThat(state, is(GameState.VALIDATE_TARGET_SCORE));
+
         state = state.execute();
         assertThat(state, is(GameState.PLAY));
 
-        String input = "CO3";
+        input = "CO3";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         GameState.scanner = new Scanner(System.in);
 

@@ -6,8 +6,12 @@ GameStates:
 2. AWAIT_TARGET_SCORE
     - set targetScore = Scanner.nextInt()
 3. VALIDATE_TARGET_SCORE
-    - if validScore, go to 4
-    - else, "Bad input: target score should be in the range of 1-5." & go to 2
+    - if validScore
+        - "Target score set. Predict correctly x times to win the game."
+        - go to 4
+    - else
+        - "Bad input: target score should be in the range of 1-5."
+        - go to 2
 4. GET_DIFFICULTY
     - "Do you want AI to be Easy or Hard? (e/h)"
     - Scanner.next().charAt(0)
@@ -23,7 +27,7 @@ GameStates:
         - if validHands && validPrediction, go to 7
         - if validHands && !validPrediction, "Bad input: prediction should be in the range of 0-4."
         - else, "Bad input: correct input should be of the form CC3, where the first two letters indicate [O]pen or [C]losed state for each hand, followed by the prediction (0-4)."
-    - if !isUserPredictor
+    - else
         - if validHands && emptyPrediction, go to 7
         - if validHands && !emptyPrediction, "Bad input: no prediction expected, you are not the predictor."
         - else, "Bad input: correct input should be of the form CC3, where the letters indicate [O]pen or [C]losed state for each hand."
@@ -32,11 +36,23 @@ GameStates:
     - set aiResponse
     - "AI: xx"
 8. GET_RESULT
-    - if isPredictionGood, "You WIN!! or You LOSE!!", go to 8
-    - else, "No winner.", go to 7
-9. NEXT_ROUND
-    - set isUserPredictor = !isUserPredictor
-    - go to 2
+    - if isPredictionGood
+        - if isUserPredictor
+            - userScore++
+            - if userScore == targetScore, "You WIN!!" & go to 10
+            - else
+                - "You win this round!!"
+                - set isUserPredictor == true
+        - else
+            - aiScore++
+            - if aiScore == targetScore, "You LOSE!!" & go to 10
+            - else,
+                - "You lose this round!!"
+                - set isUserPredictor = false
+    - else
+        - "No winner."
+        - set isUserPredictor = !isUserPredictor
+    - go to 4
 10. GAME_OVER
     - "Do you want to play again? (y/n)"
     - Scanner.next().charAt(0)
