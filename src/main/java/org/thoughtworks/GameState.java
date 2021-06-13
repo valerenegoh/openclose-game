@@ -13,25 +13,20 @@ public enum GameState {
             resetConfigurations();
             sysOut.println("Welcome to the game!");
             sysOut.println("What is your target score?");
-            return AWAIT_TARGET_SCORE;
+            return TARGET_SCORE;
         }
     },
-    AWAIT_TARGET_SCORE {
+    TARGET_SCORE {
         @Override
         public GameState execute() {
-            targetScore = scanner.nextInt();
-            return VALIDATE_TARGET_SCORE;
-        }
-    },
-    VALIDATE_TARGET_SCORE {
-        @Override
-        public GameState execute() {
-            if (isValidTargetScore(targetScore)) {
+            String input = scanner.nextLine();
+            if (isValidTargetScore(input)) {
+                targetScore = Integer.parseInt(input);
                 sysOut.println(String.format("Target score set. Predict correctly %d times to win the game.", targetScore));
                 return PLAY;
             }
             sysOut.println("Bad input: target score should be in the range of 1-5.");
-            return AWAIT_TARGET_SCORE;
+            return TARGET_SCORE;
         }
     },
     PLAY {
@@ -107,7 +102,7 @@ public enum GameState {
         @Override
         public GameState execute() {
             sysOut.println("Do you want to play again?");
-            char input = scanner.next().charAt(0);
+            char input = scanner.nextLine().charAt(0);
             if (input == 'N' || input == 'n') {
                 sysOut.println("Ok, bye!");
                 return END;

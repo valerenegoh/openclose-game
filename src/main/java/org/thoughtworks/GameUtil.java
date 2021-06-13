@@ -47,7 +47,7 @@ public class GameUtil {
         return response.substring(2).isEmpty();
     }
 
-    public static boolean isValidTargetScore(int x) {
-        return x >= 1 && x <= 5;
+    public static boolean isValidTargetScore(String score) {
+        return score.matches("^[1-5]$");
     }
 }

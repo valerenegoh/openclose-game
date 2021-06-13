@@ -35,13 +35,17 @@ public class GameStateTest {
 
     @Test
     public void shouldPrintCorrectValidationMessageForValidateTargetScoreState() {
-        state = GameState.VALIDATE_TARGET_SCORE;
+        state = GameState.TARGET_SCORE;
 
-        GameState.targetScore = 3;
+        String targetScore = "3";
+        System.setIn(new ByteArrayInputStream(targetScore.getBytes()));
+        GameState.scanner = new Scanner(System.in);
         state.execute();
         assertThat(out.toString(), containsString("Target score set. Predict correctly 3 times to win the game."));
 
-        GameState.targetScore = -1;
+        targetScore = "-1";
+        System.setIn(new ByteArrayInputStream(targetScore.getBytes()));
+        GameState.scanner = new Scanner(System.in);
         state.execute();
         assertThat(out.toString(), containsString("Bad input: target score should be in the range of 1-5."));
     }
@@ -156,10 +160,7 @@ public class GameStateTest {
         GameState.scanner = new Scanner(System.in);
 
         state = state.execute();
-        assertThat(state, is(GameState.AWAIT_TARGET_SCORE));
-
-        state = state.execute();
-        assertThat(state, is(GameState.VALIDATE_TARGET_SCORE));
+        assertThat(state, is(GameState.TARGET_SCORE));
 
         state = state.execute();
         assertThat(state, is(GameState.PLAY));

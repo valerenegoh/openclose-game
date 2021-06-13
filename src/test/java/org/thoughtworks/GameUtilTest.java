@@ -67,8 +67,9 @@ public class GameUtilTest {
 
     @Test
     public void shouldReturnIfUserGivesValidTargetScoreInput() {
-        assertThat(GameUtil.isValidTargetScore(3), is(true));
-        assertThat(GameUtil.isValidTargetScore(-1), is(false));
-        assertThat(GameUtil.isValidTargetScore(1000000), is(false));
+        assertThat(GameUtil.isValidTargetScore("3"), is(true));
+        assertThat(GameUtil.isValidTargetScore("-1"), is(false));
+        assertThat(GameUtil.isValidTargetScore("1000000"), is(false));
+        assertThat(GameUtil.isValidTargetScore("ten"), is(false));
     }
 }
